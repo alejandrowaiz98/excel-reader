@@ -1,0 +1,1 @@
+Este proyecto está hecho para que, dado el excel que agregues a la carpeta root de este proyecto (donde está el archivo main.go), puedas leerlo, tomar todas las columnas de informacion, almacenarlas en mapas y mandarlas a un tercero, todo esto para tener "bases de datos" agiles (ya que la info guardada en una BBDD será la que esté en el excel)
