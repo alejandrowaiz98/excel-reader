@@ -1,7 +1,6 @@
 package reader
 
 import (
-	"log"
 	"sync"
 
 	config "github.com/alejandrowaiz98/excel-reader/config"
@@ -19,7 +18,7 @@ func (r *Reader) Read(wg *sync.WaitGroup, ch chan (map[string]string)) {
 			logger.Error().Err(err).Msg("Err closing file")
 		}
 
-		log.Println("File closed")
+		logger.Info().Msg("File closed")
 	}()
 
 	rows, err := r.file.GetRows("data")
