@@ -1,37 +1,56 @@
 package main
 
 import (
-	"log"
 	"sync"
 
-	"github.com/alejandrowaiz98/excel-reader/excel"
+	"github.com/alejandrowaiz98/excel-reader/config"
+	"github.com/alejandrowaiz98/excel-reader/injector"
+	"github.com/alejandrowaiz98/excel-reader/reader"
 	"github.com/joho/godotenv"
 )
 
 var wg sync.WaitGroup
+var logger = config.GetLogger()
 
 func main() {
 
 	godotenv.Load(".env")
 
-	wg.Add(1)
+	wg.Add(2)
 
 	ch := make(chan map[string]string)
+	errCh := make(chan (error))
 
-	excel, err := excel.New()
+	reader, injector := setup()
 
-	if err != nil {
-		panic(err)
-	}
+	go reader.Read(&wg, ch)
 
-	go excel.Read(&wg, ch)
+	go injector.Inject(&wg, ch, errCh)
 
-	for msg := range ch {
+	for err := range errCh {
 
-		log.Printf("To store: %v", msg)
+		logger.Err(err).Msg("")
 
 	}
 
 	wg.Wait()
+
+}
+
+func setup() (reader.ReaderInterface, injector.InjectorInterface) {
+
+	reader, err := reader.New()
+
+	if err != nil {
+		logger.Fatal().Err(err).Msg("Reader error")
+	}
+
+	injector, err := injector.New()
+
+	if err != nil {
+		logger.Fatal().Err(err).Msg("Reader error")
+	}
+
+	return reader, injector
 
 }
